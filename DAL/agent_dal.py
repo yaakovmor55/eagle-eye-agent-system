@@ -27,10 +27,10 @@ class AgentDal:
 
 
     def get_all_agents(self):
-        sql = "SELECT id, codeName, realName, location, status, missionCompleted FROM agents"
+        sql = "SELECT id, codeName, realName, location, status, missionsCompleted FROM agents"
         try:
             self.cursor.execute(sql)
-            results = self.cursor.fatchall()
+            results = self.cursor.fetchall()
             agents = []
             for row in results:
                 agent = Agent(
@@ -53,3 +53,34 @@ class AgentDal:
         if self.conn:
             self.conn.close()
             print("MySql connection closed.")
+
+    def update_agent(self, agent: Agent):
+        sql = """
+        UPDATE agents SET codeName=%s,realName=%s, location=%s, status=%s, missionsCompleted=%s
+        WHERE id=%s
+        """
+        values = (
+            agent.code_name,
+            agent.real_name,
+            agent.status.value,
+            agent.location,
+            agent.missions_completed,
+            agent.id
+        )
+        try:
+            self.cursor.execute(sql, values)
+            self.conn.commit()
+            print("Agent update successfully")
+        except Error as e:
+            print(f"Failed to update agent {e}")
+
+    def delete_agent(self, agent_id:int):
+        sql = """
+        DELETE FROM agents WHERE id=%s
+        """
+        try:
+            self.cursor.execute(sql,(agent_id,))
+            self.conn.commit()
+            print("Agent deleted successfully")
+        except Error as e:
+            print("Failed to delete agent: {e}")
