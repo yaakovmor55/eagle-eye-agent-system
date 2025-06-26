@@ -1,15 +1,10 @@
-import mysql.connector
-from mysql.connector import Error
-from models.agent import Agent
+from mysql.connector import connect, Error
+from models.agent import Agent, Status
 
 class AgentDal:
     def __init__(self, host='localhost', database='eagleEyeDB',user='root', password=''):
         try:
-            self.conn = mysql.connector.connect
-            self.host = host
-            self.database= database
-            self.user = user
-            self.password = password
+            self.conn = connect(host=host, database=database, user=user, password=password)
             self.cursor = self.conn.cursor()
             print("Connected to MySQL successfully.")
         except Error as e:
@@ -22,7 +17,7 @@ class AgentDal:
         INSERT INTO agents (codeName, realName, location, status, missionsCompleted)
         VALUES(%s, %s, %s, %s, %s)
         """
-        values = (agent.code_name, agent.real_name, agent.location, agent.status, agent.mission_completed)
+        values = (agent.code_name, agent.real_name, agent.location, agent.status.value, agent.missions_completed)
         try:
             self.cursor.execute(sql, values)
             self.conn.commit()
@@ -42,8 +37,8 @@ class AgentDal:
                     code_name=row[1],
                     real_name=row[2],
                     location=row[3],
-                    status=row[4],
-                    mission_completed=row[5],
+                    status=Status(row[4]),
+                    missions_completed=row[5],
                     agent_id=row[0]
                 )
                 agents.append(agent)

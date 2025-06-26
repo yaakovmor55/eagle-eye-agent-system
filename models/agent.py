@@ -1,11 +1,20 @@
+from  enum import  Enum
+
+class Status(Enum):
+    ACTIVE = "Active"
+    INJURED = "Injured"
+    MISSING = "Missing"
+    RETIRED = "Retired"
+
+
 class Agent:
-    def __init__(self, code_name, real_name,status, location, mission_completed, agent_id = None):
+    def __init__(self, code_name, real_name,status: Status.ACTIVE, location, missions_completed, agent_id = None):
         self.id = agent_id
         self.code_name = code_name
         self.real_name = real_name
-        self.status = status
         self.location = location
-        self.mission_completed = mission_completed
+        self.status = status
+        self.missions_completed = missions_completed
 
     def __str__(self):
         return (
@@ -13,6 +22,6 @@ class Agent:
             f"Code Name: {self.code_name} | "
             f"Real Name: {self.real_name} | "
             f"Location: {self.location} | "
-            f"Status: {self.status} | "
-            f"Missions: {self.mission_completed}"
+            f"Status: {self.status.value} | "
+            f"Missions: {self.missions_completed}"
         )
